@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Fund Transfer</title>
+</head>
+
+<body>
+    <h1>Fund Transfer</h1>
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <li{% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
+            {% endfor %}
+    </ul>
+    {% endif %}
+    <form method="post">
+        {% csrf_token %}
+        <div>
+            <label for="sender_account_no">Sender Account Number:</label>
+            <input type="text" id="sender_account_no" name="sender_account_no" required>
+        </div>
+        <br>
+        <div>
+            <label for="receiver_account_no">Receiver Account Number:</label>
+            <input type="text" id="receiver_account_no" name="receiver_account_no" required>
+        </div>
+        <br>
+        <div>
+            <label for="amount">Amount to Transfer:</label>
+            <input type="number" step="0.01" id="amount" name="amount" required>
+        </div>
+        <br>
+        <button type="submit">Transfer Funds</button>
+    </form>
+</body>
+
+</html>

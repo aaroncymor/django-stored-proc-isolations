@@ -1,0 +1,25 @@
+CREATE OR REPLACE FUNCTION transfer_funds(
+    sender_account_no VARCHAR(10),
+    receiver_account_no VARCHAR(10),
+    transfer_amount DECIMAL
+) RETURNS BOOLEAN AS $$
+DECLARE
+    sender_balance DECIMAL;
+    receiver_balance DECIMAL;
+BEGIN
+    -- Lock the rows to prevent race conditions
+    SELECT balance INTO sender_balance FROM bank_account WHERE account_number = sender_account_no FOR UPDATE;
+    SELECT balance INTO receiver_balance FROM bank_account WHERE account_number = receiver_account_no FOR UPDATE;
+
+    -- Check if the sender has sufficient balance
+    IF sender_balance >= transfer_amount THEN
+        -- Perform the transfer
+        UPDATE bank_account SET balance = sender_balance - transfer_amount WHERE account_number = sender_account_no;
+        UPDATE bank_account SET balance = receiver_balance + transfer_amount WHERE account_number = receiver_account_no;
+        RETURN TRUE;
+    ELSE
+        -- Insufficient balance
+        RETURN FALSE;
+    END IF;
+END;
+$$ LANGUAGE plpgsql;
